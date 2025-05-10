@@ -1,5 +1,5 @@
 <script>
-  import { getLabel } from "./fieldLabels.js"; // Import the label helper
+  import { getLabel } from "./fieldLabels.js";
 
   export let result;
 
@@ -22,7 +22,6 @@
     (w) => !w.includes(MISSING_LAYOUT_PREFIX),
   );
 
-  // --- Field Rendering Preparation ---
   /**
    * Prepares segment data for rendering in the template's #each block.
    * @param {object} segmentData - The parsed data for a segment/record.
@@ -192,6 +191,7 @@
           <dt class="font-medium text-gray-500 truncate" title={field.key}>
             {field.label}:
           </dt>
+
           <dd
             class="text-gray-800 break-words"
             title={field.original ? `Original: ${field.original}` : ""}
@@ -201,7 +201,7 @@
         {/each}
       </dl>
       {#if ha._linha_original}
-        <details class="text-xs p-2 bg-gray-50 border-t border-gray-200">
+        <details class="text-xs p-2 bg-gray-50 border-t border-gray-200 mb-1">
           <summary class="cursor-pointer text-gray-500"
             >Ver linha original</summary
           >
@@ -263,7 +263,7 @@
             </dl>
             {#if loteData.header_lote._linha_original}
               <details class="text-xs mt-1">
-                <summary class="cursor-pointer text-gray-500"
+                <summary class="cursor-pointer text-gray-500 mb-1"
                   >Ver linha original</summary
                 >
                 <pre
@@ -296,142 +296,52 @@
                     </p>
                   {/if}
 
-                  {#if group.segmento_j_itau_ret_p1 && group.segmento_j_itau_ret_p2}
-                    <!-- Display Itaú J Part 1 -->
-                    {@const segmentDataP1 = group.segmento_j_itau_ret_p1}
-                    <div class="segment-item mb-2 last:mb-0">
-                      <h6
-                        class="font-medium text-sm text-gray-700 flex justify-between items-center border-b border-dotted border-gray-300 pb-1 mb-1"
-                      >
-                        <span>Segmento J (Itaú Retorno - Parte 1)</span>
-                        <span class="text-xs font-normal text-gray-500"
-                          >Linha {segmentDataP1._lineNumber || "N/A"}</span
+                  {#each Object.entries(group) as [segmentKey, segmentData] (segmentKey)}
+                    {#if !segmentKey.startsWith("_")}
+                      <div class="segment-item mb-2 last:mb-0">
+                        <h6
+                          class="font-medium text-sm text-gray-700 flex justify-between items-center border-b border-dotted border-gray-300 pb-1 mb-1"
                         >
-                      </h6>
-                      <dl
-                        class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-1 text-xs"
-                      >
-                        {#each prepareFieldsForRender(segmentDataP1) as field (field.key)}
-                          <dt
-                            class="font-medium text-gray-500 truncate"
-                            title={field.key}
+                          <span>Segmento {getSegmentType(segmentKey)}</span>
+                          <span class="text-xs font-normal text-gray-500"
+                            >Linha {segmentData._lineNumber || "N/A"}</span
                           >
-                            {field.label}:
-                          </dt>
-                          <dd
-                            class="text-gray-800 break-words"
-                            title={field.original
-                              ? `Original: ${field.original}`
-                              : ""}
-                          >
-                            {field.value}
-                          </dd>
-                        {/each}
-                      </dl>
-                      {#if segmentDataP1._linha_original}
-                        <details class="text-xs mt-1">
-                          <summary class="cursor-pointer text-gray-500"
-                            >Ver linha original</summary
-                          >
-                          <pre
-                            class="mt-1 font-mono bg-white p-1 border rounded overflow-x-auto"><code
-                              >{segmentDataP1._linha_original}</code
-                            ></pre>
-                        </details>
-                      {/if}
-                    </div>
-
-                    <!-- Display Itaú J Part 2 -->
-                    {@const segmentDataP2 = group.segmento_j_itau_ret_p2}
-                    <div class="segment-item mb-2 last:mb-0">
-                      <h6
-                        class="font-medium text-sm text-gray-700 flex justify-between items-center border-b border-dotted border-gray-300 pb-1 mb-1"
-                      >
-                        <span>Segmento J (Itaú Retorno - Parte 2)</span>
-                        <span class="text-xs font-normal text-gray-500"
-                          >Linha {segmentDataP2._lineNumber || "N/A"}</span
+                        </h6>
+                        <!-- Render segment fields -->
+                        <dl
+                          class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-1 text-xs"
                         >
-                      </h6>
-                      <dl
-                        class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-1 text-xs"
-                      >
-                        {#each prepareFieldsForRender(segmentDataP2) as field (field.key)}
-                          <dt
-                            class="font-medium text-gray-500 truncate"
-                            title={field.key}
-                          >
-                            {field.label}:
-                          </dt>
-                          <dd
-                            class="text-gray-800 break-words"
-                            title={field.original
-                              ? `Original: ${field.original}`
-                              : ""}
-                          >
-                            {field.value}
-                          </dd>
-                        {/each}
-                      </dl>
-                      {#if segmentDataP2._linha_original}
-                        <details class="text-xs mt-1">
-                          <summary class="cursor-pointer text-gray-500"
-                            >Ver linha original</summary
-                          >
-                          <pre
-                            class="mt-1 font-mono bg-white p-1 border rounded overflow-x-auto"><code
-                              >{segmentDataP2._linha_original}</code
-                            ></pre>
-                        </details>
-                      {/if}
-                    </div>
-                  {:else}
-                    {#each Object.entries(group) as [segmentKey, segmentData] (segmentKey)}
-                      {#if !segmentKey.startsWith("_")}
-                        <div class="segment-item mb-2 last:mb-0">
-                          <h6
-                            class="font-medium text-sm text-gray-700 flex justify-between items-center border-b border-dotted border-gray-300 pb-1 mb-1"
-                          >
-                            <span>Segmento {getSegmentType(segmentKey)}</span>
-                            <span class="text-xs font-normal text-gray-500"
-                              >Linha {segmentData._lineNumber || "N/A"}</span
+                          {#each prepareFieldsForRender(segmentData) as field (field.key)}
+                            <dt
+                              class="font-medium text-gray-500 truncate"
+                              title={field.key}
                             >
-                          </h6>
-                          <!-- Render segment fields -->
-                          <dl
-                            class="grid grid-cols-[auto,1fr] gap-x-4 gap-y-1 text-xs"
-                          >
-                            {#each prepareFieldsForRender(segmentData) as field (field.key)}
-                              <dt
-                                class="font-medium text-gray-500 truncate"
-                                title={field.key}
-                              >
-                                {field.label}:
-                              </dt>
-                              <dd
-                                class="text-gray-800 break-words"
-                                title={field.original
-                                  ? `Original: ${field.original}`
-                                  : ""}
-                              >
-                                {field.value}
-                              </dd>
-                            {/each}
-                          </dl>
-                          {#if segmentData._linha_original}
-                            <details class="text-xs mt-1">
-                              <summary class="cursor-pointer text-gray-500"
-                                >Ver linha original</summary
-                              >
-                              <pre
-                                class="mt-1 font-mono bg-white p-1 border rounded overflow-x-auto"><code
-                                  >{segmentData._linha_original}</code
-                                ></pre>
-                            </details>
-                          {/if}
-                        </div>
-                      {/if}
-                    {/each}
-                  {/if}
+                              {field.label}:
+                            </dt>
+                            <dd
+                              class="text-gray-800 break-words"
+                              title={field.original
+                                ? `Original: ${field.original}`
+                                : ""}
+                            >
+                              {field.value}
+                            </dd>
+                          {/each}
+                        </dl>
+                        {#if segmentData._linha_original}
+                          <details class="text-xs mt-1">
+                            <summary class="cursor-pointer text-gray-500 mb-1"
+                              >Ver linha original</summary
+                            >
+                            <pre
+                              class="mt-1 font-mono bg-white p-1 border rounded overflow-x-auto"><code
+                                >{segmentData._linha_original}</code
+                              ></pre>
+                          </details>
+                        {/if}
+                      </div>
+                    {/if}
+                  {/each}
                 </div>
               {/each}
             </div>
@@ -467,7 +377,7 @@
             </dl>
             {#if loteData.trailer_lote._linha_original}
               <details class="text-xs mt-1">
-                <summary class="cursor-pointer text-gray-500"
+                <summary class="cursor-pointer text-gray-500 mb-1"
                   >Ver linha original</summary
                 >
                 <pre
@@ -507,7 +417,7 @@
         {/each}
       </dl>
       {#if ta._linha_original}
-        <details class="text-xs p-2 bg-gray-50 border-t border-gray-200">
+        <details class="text-xs p-2 bg-gray-50 border-t border-gray-200 mb-1">
           <summary class="cursor-pointer text-gray-500"
             >Ver linha original</summary
           >
