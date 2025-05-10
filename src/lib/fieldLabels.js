@@ -173,8 +173,6 @@ export const labels = {
   // --- Trailer Lote Specific ---
   numero_aviso_debito: "Num. Aviso Débito (Ret.)",
 
-  // --- Placeholder for fields not yet labeled ---
-  // Add more specific labels as you identify fields in different segments
 };
 
 /**
